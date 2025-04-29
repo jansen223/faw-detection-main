@@ -1,0 +1,16 @@
+.about-container {
+  padding: 20px;
+  text-align: center;
+}
+
+.about-container h2 {
+  font-size: 2rem;
+  color: #004d40;
+  margin-bottom: 20px;
+}
+
+.about-container p {
+  font-size: 1.2rem;
+  color: #555;
+  line-height: 1.6;
+}

@@ -1,0 +1,42 @@
+.upload-and-detect {
+  padding: 20px;
+  text-align: center;
+}
+
+.dropzone {
+  border: 2px dashed green;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+  background-color: #eaf4ff;
+  transition: background-color 0.3s ease;
+}
+
+.dropzone:hover {
+  background-color: #d4e9ff;
+}
+
+.results {
+  margin-top: 20px;
+}
+
+.result {
+  margin-bottom: 20px;
+}
+
+.result img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.map-container {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}

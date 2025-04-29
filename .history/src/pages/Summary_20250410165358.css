@@ -1,0 +1,48 @@
+.summary-and-percentages-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  .chart-section {
+    width: 40%;
+    text-align: center;
+  }
+  
+  .chart-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .summary-section {
+    width: 55%;
+  }
+  
+  .summary-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .summary-table th, .summary-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .summary-table th {
+    background-color: #004d40;
+    color: white;
+  }
+  
+  .summary-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .summary-table tr:hover {
+    background-color: #ddd;
+  }

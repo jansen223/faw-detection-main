@@ -1,0 +1,69 @@
+.summary-and-percentages-container {
+  display: flex;
+  flex-direction: row; /* Arrange items horizontally */
+  justify-content: space-between; /* Add space between the chart and summary */
+  align-items: flex-start; /* Align items at the top */
+  padding: 20px;
+  gap: 60px; /* Add spacing between the chart and summary */
+}
+
+.chart-section {
+  width: 40%; /* Adjust width for the pie chart */
+  text-align: center;
+}
+
+.chart-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.summary-section {
+  width: 55%; /* Adjust width for the summary table */
+}
+
+.summary-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.summary-table th, .summary-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.summary-table th {
+  background-color: #004d40;
+  color: white;
+}
+
+.summary-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.summary-table tr:hover {
+  background-color: #ddd;
+}
+
+.back-button {
+  position: absolute; /* Position the button absolutely */
+  bottom: 100px; /* Distance from the bottom of the page */
+  left: 60px; /* Distance from the left of the page */
+  padding: 10px 20px;
+  background-color: #004d40;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #00332e;
+}

@@ -1,0 +1,77 @@
+/* General App Styling */
+.App {
+  display: flex;
+  flex-direction: row; /* Change layout to row for sidebar */
+  min-height: 100vh;
+}
+
+.App-header {
+  background-color: green;
+  color: white;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  padding: 15px 0;
+  width: 100%; /* Ensure header spans the full width */
+}
+
+.App-navbar {
+  background-color: #00695c;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column; /* Stack links vertically */
+  gap: 15px;
+  width: 200px; /* Fixed width for the sidebar */
+  height: 100vh; /* Full height of the viewport */
+  position: fixed; /* Keep the sidebar fixed */
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+}
+
+.App-navbar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.App-navbar li {
+  margin: 0;
+}
+
+.App-navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 18px;
+  padding: 10px 15px;
+  display: block;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.App-navbar a:hover {
+  background-color: #004d40;
+}
+
+/* Main Content Styling */
+.App-content {
+  margin-left: 220px; /* Add margin to account for the sidebar */
+  padding: 20px;
+  flex: 1; /* Allow content to take up remaining space */
+}
+
+/* Footer Styling */
+.App-footer {
+  background-color: #004d40;
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  margin-top: auto;
+  position: fixed;
+  bottom: 0;
+  left: 220px; /* Align with the content area */
+  width: calc(100% - 220px); /* Adjust width to exclude sidebar */
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+}

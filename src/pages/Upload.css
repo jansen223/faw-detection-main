@@ -1,0 +1,36 @@
+.upload-detection-container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .upload-input {
+    margin: 20px 0;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .image-preview {
+    margin: 20px 0;
+  }
+  
+  .image-preview img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .detection-results {
+    margin-top: 20px;
+  }
+  
+  .detection-results ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .detection-results li {
+    font-size: 16px;
+    margin: 5px 0;
+  }

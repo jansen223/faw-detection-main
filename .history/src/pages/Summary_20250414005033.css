@@ -1,0 +1,110 @@
+.summary-and-percentages-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  gap: 80px;
+}
+
+.chart-section {
+  flex: 1;
+  max-width: 500px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-wrapper {
+  width: 400px;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+  aspect-ratio: 1 / 1;
+}
+
+.chart-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #004d40;
+}
+
+.summary-section {
+  flex: 1;
+  max-width: 700px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  border-radius: 8px;
+}
+
+.summary-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #004d40;
+  text-align: center;
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.summary-table th, .summary-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.summary-table th {
+  background-color: #0d8b76;
+  color: white;
+}
+
+.summary-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.back-button {
+  margin: 20px 0 20px 300px;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #0d8b76;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #004d40;
+}
+
+.delete-button {
+  padding: 5px 10px;
+  background-color: #d83939;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #b71c1c;
+}

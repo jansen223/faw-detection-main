@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Drone View</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>Live Drone Video</h1>
+  <img id="video" src="" width="640" height="480" />
+  
+  <script>
+    const socket = io("http://localhost:5000");
+
+    socket.on("connect", () => {
+      console.log("Connected to Flask server");
+    });
+
+    socket.on("video_frame", (data) => {
+      const img = document.getElementById("video");
+      img.src = `data:image/jpeg;base64,${data.image}`;
+    });
+  </script>
+</body>
+</html>

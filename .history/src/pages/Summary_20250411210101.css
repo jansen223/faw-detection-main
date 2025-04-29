@@ -1,0 +1,92 @@
+.summary-and-percentages-container {
+  display: flex;
+  flex-direction: row; /* Arrange items horizontally */
+  justify-content: center; /* Add space between the chart and summary */
+  align-items: flex-start; /* Align items at the top */
+  padding: 20px;
+  gap: 80px; /* Add spacing between the chart and summary */
+}
+
+.chart-section {
+  width: 40%; /* Adjust width for the pie chart */
+  text-align: center;
+  display: flex; /* Use flexbox for centering */
+  flex-direction: column; /* Align content vertically */
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+  min-height: 400px; /* Ensure enough height for the pie chart */
+}
+
+.chart-wrapper {
+  width: 100%;     /* or fixed value like 500px */
+  max-width: 600px;
+  height: 400px;
+}
+
+.chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #004d40; /* Change the color of the header in the chart section */
+}
+
+.summary-section {
+  width: 55%; /* Adjust width for the summary table */
+  max-height: 400px; /* Limit the height of the summary section */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+  padding: 10px; /* Add padding for better spacing */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  background-color: #ffffff; /* Ensure a white background */
+  border-radius: 8px; /* Add rounded corners */
+}
+
+.summary-section h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #004d40; /* Change the color of the header in the summary section */
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px; /* Add spacing above the table */
+}
+
+.summary-table th, .summary-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  font-size: 1rem; /* Ensure consistent font size */
+}
+
+.summary-table th {
+  background-color: #0d8b76;
+  color: white;
+}
+
+.summary-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.back-button {
+  position: absolute; /* Position the button absolutely */
+  bottom: 100px; /* Distance from the bottom of the page */
+  left: 60px; /* Distance from the left of the page */
+  padding: 10px 20px;
+  background-color: green;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: darkgreen;
+}

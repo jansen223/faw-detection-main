@@ -1,0 +1,66 @@
+.percentages-container {
+  padding: 20px;
+  text-align: center;
+}
+
+.percentages-container h2 {
+  font-size: 2rem;
+  color: #004d40;
+  margin-bottom: 20px;
+}
+
+.percentages {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.percentage {
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 200px;
+}
+
+.percentage.infested {
+  background-color: #ffcccb;
+  color: #b71c1c;
+}
+
+.percentage.not-infested {
+  background-color: #c8e6c9;
+  color: #1b5e20;
+}
+
+.percentage h3 {
+  font-size: 1.2rem;
+}
+
+.percentage p {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.chart-container {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+  background: none; /* Remove any background color */
+}
+
+.back-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #004d40;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #00332e;
+}

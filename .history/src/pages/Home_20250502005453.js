@@ -53,8 +53,6 @@ function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // ... existing imports and code remain unchanged
-
   useEffect(() => {
     const captureIframeScreen = async () => {
       try {
@@ -77,7 +75,6 @@ function Home() {
 
     captureIframeScreen();
 
-    // 🛑 CLEANUP: Stop the screen capture stream
     return () => {
       const video = videoCaptureRef.current;
       const stream = video?.srcObject;
@@ -90,75 +87,41 @@ function Home() {
 
   useEffect(() => {
     let animationFrameId;
-    let isMounted = true; // ✅ add flag to track if component is still mounted
-  
+    let isMounted = true;
+
     const drawVideo = () => {
-      if (!isMounted) return; // ✅ skip if component is unmounted
-  
+      if (!isMounted) return;
+
       const video = videoCaptureRef.current;
       const canvas = canvasRef.current;
-  
+
       if (!video || !canvas) {
         animationFrameId = requestAnimationFrame(drawVideo);
         return;
       }
-  
+
       const ctx = canvas.getContext('2d');
       if (!ctx || video.readyState < 2) {
         animationFrameId = requestAnimationFrame(drawVideo);
         return;
       }
-  
+
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-  
+
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       drawBoxes(ctx);
-  
+
       animationFrameId = requestAnimationFrame(drawVideo);
     };
-  
+
     animationFrameId = requestAnimationFrame(drawVideo);
-  
+
     return () => {
-      isMounted = false; // ✅ flag unmounted
-      cancelAnimationFrame(animationFrameId); // ✅ cleanup loop
+      isMounted = false;
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
-  
-
-
-  useEffect(() => {
-    const drawVideo = () => {
-      const video = videoCaptureRef.current;
-      const canvas = canvasRef.current;
-  
-      if (!video || !canvas || video.readyState < 2) {
-        requestAnimationFrame(drawVideo);
-        return;
-      }
-  
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        requestAnimationFrame(drawVideo);
-        return;
-      }
-  
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-  
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
-      // Draw bounding boxes
-      drawBoxes(ctx);
-  
-      requestAnimationFrame(drawVideo);
-    };
-  
-    requestAnimationFrame(drawVideo);
-  }, []);
-  
-  
 
   useEffect(() => {
     const captureAndDetect = () => {
@@ -187,7 +150,6 @@ function Home() {
             classesRef.current = result.classes || [];
             updateCounts(result);
 
-            // Set server reachable because the request succeeded
             setIsServerReachable(true);
           } catch (err) {
             console.error('Error sending frame to server:', err);
@@ -197,7 +159,6 @@ function Home() {
       }, 'image/jpeg');
     };
 
-    // Set interval to 3 seconds (3000 ms)
     const intervalId = setInterval(captureAndDetect, 3000);
     return () => clearInterval(intervalId);
   }, []);
@@ -231,9 +192,8 @@ function Home() {
     setPercentageInfested(total > 0 ? (result.infested_count / total) * 100 : 0);
   };
 
-  // 🔥🔥 ADD THIS: Function to save summary to backend
   const saveSummary = async (infestedCount, notInfestedCount) => {
-    if (infestedCount + notInfestedCount === 0) return; // don't save empty detections
+    if (infestedCount + notInfestedCount === 0) return;
 
     try {
       const response = await fetch('http://localhost:5000/save_summary', {
@@ -257,9 +217,11 @@ function Home() {
   return (
     <>
       <div className="layout-container">
-        {/* Detection Summary */}
         <div className="detection-section">
           <h3>DETECTION SUMMARY</h3>
+          <h2 style={{ color: statusText === 'Connected ✅' ? 'green' : 'red' }}>
+            Server Status: {statusText}
+          </h2>
 
           <div className="detection-cards">
             <div className="card total">
@@ -270,10 +232,6 @@ function Home() {
               <h4>Infested Corn Plants</h4>
               <p>{infestedCorn}</p>
             </div>
-            <div className="card not-infested">
-              <h4>Not Infested Corn Plants</h4>
-              <p>{totalCorn - infestedCorn}</p>
-            </div>
             <div className="card percentage">
               <h4>Percentage Infested</h4>
               <p>{percentageInfested ? percentageInfested.toFixed(2) : '0.00'}%</p>
@@ -281,60 +239,55 @@ function Home() {
           </div>
         </div>
 
-        {/* Drone Live Feed Section */}
-        <div className="drone-feed-section">
+        <div className="iframe-container" style={{ position: 'relative', width: '100%', height: '700px' }}>
           <h3>DRONE LIVE FEED</h3>
 
-          <div className="iframe-container" style={{ position: 'relative', width: '1000px', height: '600px' }}>
-            <iframe
-              ref={iframeRef}
-              title="Drone Live Feeds"
-              src="https://vdo.ninja/?view=VZeA6ZX&autoplay=1&muted=1"
-              allow="camera; microphone; autoplay; fullscreen"
-              width="100%"
-              height="100%"
-              frameBorder="0"
-              allowFullScreen
-              style={{ position: 'relative', zIndex: 1 }}
-            />
+          <iframe
+            ref={iframeRef}
+            title="Drone Live Feeds"
+            src="http://localhost:3001/videoproxy/?view=hemN544&autoplay=1&muted=1"
+            allow="camera; microphone; autoplay; fullscreen"
+            width="100%"
+            height="100%"
+            frameBorder="0"
+            allowFullScreen
+            style={{ zIndex: 1 }}
+          ></iframe>
 
-            <video
-              ref={videoCaptureRef}
-              style={{ display: 'none' }}
-            />
+          <video
+            ref={videoCaptureRef}
+            style={{ display: 'none' }}
+            playsInline
+            muted
+          />
 
-            <canvas
-              ref={canvasRef}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                pointerEvents: 'none',
-                zIndex: 2,
-              }}
-            />
-          </div>
+          <canvas
+            ref={canvasRef}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              pointerEvents: 'none',
+              zIndex: 2,
+            }}
+          />
         </div>
       </div>
 
-      {/* Options */}
-      <div className="options">
-        <button 
-          onClick={() => navigate('/summary', {
-            state: {
-              totalCorn,
-              infestedCorn,
-              notInfestedCorn: totalCorn - infestedCorn, // Added not-infested corn
-              percentageInfested,
-            }
-          })}
-          className="view-summary-button"
-        >
-          View Summary
-        </button>
-      </div>
+      <button
+        onClick={() => navigate('/summary', {
+          state: {
+            totalCorn,
+            infestedCorn,
+            percentageInfested,
+          }
+        })}
+        className="view-summary-button"
+      >
+        View Summary
+      </button>
     </>
   );
 }

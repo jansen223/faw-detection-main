@@ -14,7 +14,6 @@ import io
 import logging
 from flask_cors import CORS
 from PIL import Image, ImageDraw, ImageFont
-from queue import Queue
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -452,3 +451,4 @@ if __name__ == '__main__':
         logger.error(f"Server error: {e}")
 
     init_db()
+    

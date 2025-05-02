@@ -53,8 +53,6 @@ function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // ... existing imports and code remain unchanged
-
   useEffect(() => {
     const captureIframeScreen = async () => {
       try {
@@ -77,7 +75,6 @@ function Home() {
 
     captureIframeScreen();
 
-    // 🛑 CLEANUP: Stop the screen capture stream
     return () => {
       const video = videoCaptureRef.current;
       const stream = video?.srcObject;
@@ -90,10 +87,10 @@ function Home() {
 
   useEffect(() => {
     let animationFrameId;
-    let isMounted = true; // ✅ add flag to track if component is still mounted
+    let isMounted = true;
   
     const drawVideo = () => {
-      if (!isMounted) return; // ✅ skip if component is unmounted
+      if (!isMounted) return;
   
       const video = videoCaptureRef.current;
       const canvas = canvasRef.current;
@@ -121,44 +118,10 @@ function Home() {
     animationFrameId = requestAnimationFrame(drawVideo);
   
     return () => {
-      isMounted = false; // ✅ flag unmounted
-      cancelAnimationFrame(animationFrameId); // ✅ cleanup loop
+      isMounted = false;
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
-  
-
-
-  useEffect(() => {
-    const drawVideo = () => {
-      const video = videoCaptureRef.current;
-      const canvas = canvasRef.current;
-  
-      if (!video || !canvas || video.readyState < 2) {
-        requestAnimationFrame(drawVideo);
-        return;
-      }
-  
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        requestAnimationFrame(drawVideo);
-        return;
-      }
-  
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-  
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
-      // Draw bounding boxes
-      drawBoxes(ctx);
-  
-      requestAnimationFrame(drawVideo);
-    };
-  
-    requestAnimationFrame(drawVideo);
-  }, []);
-  
-  
 
   useEffect(() => {
     const captureAndDetect = () => {
@@ -187,7 +150,6 @@ function Home() {
             classesRef.current = result.classes || [];
             updateCounts(result);
 
-            // Set server reachable because the request succeeded
             setIsServerReachable(true);
           } catch (err) {
             console.error('Error sending frame to server:', err);
@@ -197,8 +159,7 @@ function Home() {
       }, 'image/jpeg');
     };
 
-    // Set interval to 3 seconds (3000 ms)
-    const intervalId = setInterval(captureAndDetect, 3000);
+    const intervalId = setInterval(captureAndDetect, 6000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -206,8 +167,8 @@ function Home() {
     const boxes = boxesRef.current;
     const classes = classesRef.current;
 
-    ctx.lineWidth = 2;
-    ctx.font = '18px Arial';
+    ctx.lineWidth = 6;
+    ctx.font = '26px Arial';
 
     boxes.forEach((box, idx) => {
       const [x_center, y_center, width, height] = box;
@@ -220,7 +181,7 @@ function Home() {
       ctx.fillStyle = classes[idx] === 0 ? 'red' : 'green';
 
       ctx.strokeRect(x, y, w, h);
-      ctx.fillText(classes[idx] === 0 ? 'Infested' : 'Healthy', x, y > 20 ? y - 5 : y + 20);
+      ctx.fillText(classes[idx] === 0 ? 'Infested' : 'Healthy', x, y > 20 ? y - 10 : y + 30);
     });
   };
 
@@ -231,9 +192,8 @@ function Home() {
     setPercentageInfested(total > 0 ? (result.infested_count / total) * 100 : 0);
   };
 
-  // 🔥🔥 ADD THIS: Function to save summary to backend
   const saveSummary = async (infestedCount, notInfestedCount) => {
-    if (infestedCount + notInfestedCount === 0) return; // don't save empty detections
+    if (infestedCount + notInfestedCount === 0) return;
 
     try {
       const response = await fetch('http://localhost:5000/save_summary', {
@@ -317,16 +277,14 @@ function Home() {
             />
           </div>
         </div>
-      </div>
-
-      {/* Options */}
+        {/* Options */}
       <div className="options">
         <button 
           onClick={() => navigate('/summary', {
             state: {
               totalCorn,
               infestedCorn,
-              notInfestedCorn: totalCorn - infestedCorn, // Added not-infested corn
+              notInfestedCorn: totalCorn - infestedCorn,
               percentageInfested,
             }
           })}
@@ -334,6 +292,7 @@ function Home() {
         >
           View Summary
         </button>
+      </div>
       </div>
     </>
   );

@@ -1,18 +1,20 @@
 .about-container {
   padding: 20px;
   text-align: center;
-  min-height: 500px;
+  min-height: 600px;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.226); /* Semi-transparent background */
+  backdrop-filter: blur(10px); /* Adds blur effect */
 }
 
 .about-container h2 {
   font-size: 2rem;
-  color: #004d40;
+  color: #ffffff;
   margin-bottom: 20px;
 }
 
 .about-container p {
   font-size: 1.2rem;
-  color: #555;
+  color: #ffffff;
   line-height: 1.6;
 }

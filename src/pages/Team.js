@@ -25,7 +25,7 @@ function Team() {
       name: "JOREN VARQUEZ",
       role: "Backend Developer",
       description: "Develops and maintains the server-side logic, database integration, and APIs to ensure efficient and scalable system functionality.",
-      image: "images/joren1.jpg"
+      image: "images/joren.png"
     }
   ];
 

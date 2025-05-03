@@ -13,18 +13,16 @@ function Home() {
   const canvasRef = useRef(null);
   const videoCaptureRef = useRef(null);
   const iframeRef = useRef(null);
-  const boxesRef = useRef([]);
-  const classesRef = useRef([]);
+  // const boxesRef = useRef([]); // Replaced by trackedObjectsRef
+  // const classesRef = useRef([]); // Replaced by trackedObjectsRef
+  // const previousDetectionsRef = useRef([]); // Replaced by trackedObjectsRef
+  const trackedObjectsRef = useRef([]);
+  const nextObjectId = useRef(1); // Use useRef to persist the ID counter
+  const infestedPlantIdsRef = useRef(new Set()); // Stores IDs of plants ever marked as infested
 
   const statusText = isServerReachable && isScreenCaptured
     ? 'Connected ✅'
     : 'Disconnected ❌';
-
-  useEffect(() => {
-    console.log('isScreenCaptured:', isScreenCaptured);
-    console.log('isServerReachable:', isServerReachable);
-    console.log('statusText:', statusText);
-  }, [isScreenCaptured, isServerReachable, statusText]);
 
   useEffect(() => {
     const checkServer = async () => {
@@ -34,60 +32,69 @@ function Home() {
           headers: { 'Content-Type': 'application/octet-stream' },
           body: new Blob([]),
         });
-
-        if (response.ok) {
-          setIsServerReachable(true);
-          console.log('Server is reachable');
-        } else {
-          setIsServerReachable(false);
-          console.log('Server is not reachable');
-        }
-      } catch (error) {
-        console.error('Error connecting to server:', error);
+        setIsServerReachable(response.ok);
+      } catch {
         setIsServerReachable(false);
       }
     };
 
     checkServer();
-    const interval = setInterval(checkServer, 3000);
+    const interval = setInterval(checkServer, 2000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    const videoElement = videoCaptureRef.current; // Copy ref once
-  
     const captureIframeScreen = async () => {
       try {
         const stream = await navigator.mediaDevices.getDisplayMedia({
           video: { frameRate: 30 },
           audio: false,
         });
-  
-        if (videoElement) {
-          videoElement.srcObject = stream;
-          await videoElement.play();
-        }
-  
+        const video = videoCaptureRef.current;
+        video.srcObject = stream;
+        await video.play();
         setIsScreenCaptured(true);
-        console.log('Screen captured successfully');
-      } catch (err) {
-        console.error('Error capturing iframe screen:', err);
+      } catch {
         setIsScreenCaptured(false);
       }
     };
-  
+
     captureIframeScreen();
-  
     return () => {
-      if (videoElement) {
-        const stream = videoElement.srcObject;
-        if (stream) {
-          const tracks = stream.getTracks();
-          tracks.forEach((track) => track.stop());
-        }
-      }
+      const video = videoCaptureRef.current;
+      const stream = video?.srcObject;
+      if (stream) stream.getTracks().forEach((track) => track.stop());
     };
-  }, []);  
+  }, []);
+
+  useEffect(() => {
+    let animationFrameId;
+    let isMounted = true;
+    const drawVideo = () => {
+      if (!isMounted) return;
+      const video = videoCaptureRef.current;
+      const canvas = canvasRef.current;
+      if (!video || !canvas) {
+        animationFrameId = requestAnimationFrame(drawVideo);
+        return;
+      }
+      const ctx = canvas.getContext('2d');
+      if (!ctx || video.readyState < 2) {
+        animationFrameId = requestAnimationFrame(drawVideo);
+        return;
+      }
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      drawBoxes(ctx);
+      animationFrameId = requestAnimationFrame(drawVideo);
+    };
+    animationFrameId = requestAnimationFrame(drawVideo);
+    return () => {
+      isMounted = false;
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
 
   useEffect(() => {
     const captureAndDetect = () => {
@@ -96,7 +103,6 @@ function Home() {
       const tempCtx = tempCanvas.getContext('2d');
 
       if (!video || video.readyState < 2) return;
-
       tempCanvas.width = video.videoWidth;
       tempCanvas.height = video.videoHeight;
       tempCtx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
@@ -106,87 +112,177 @@ function Home() {
           try {
             const response = await fetch('http://localhost:5000/detect', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/octet-stream',
-              },
+              headers: { 'Content-Type': 'application/octet-stream' },
               body: blob,
             });
             const result = await response.json();
-            boxesRef.current = result.boxes || [];
-            classesRef.current = result.classes || [];
-            updateCounts(result);
-
+            const newDetections = (result.boxes || []).map((box, index) => ({
+              box: box,
+              class: (result.classes || [])[index],
+            }));
+            updateTrackedObjects(newDetections); // Update tracked objects
+            updateCounts(); // Update counts based on tracked objects
             setIsServerReachable(true);
           } catch (err) {
-            console.error('Error sending frame to server:', err);
+            // console.error("Detection error:", err); // Optional: log error
             setIsServerReachable(false);
           }
         }
       }, 'image/jpeg');
     };
 
-    const intervalId = setInterval(captureAndDetect, 6000);
+    const intervalId = setInterval(captureAndDetect, 2000);
     return () => clearInterval(intervalId);
   }, []);
 
-  // const drawBoxes = (ctx) => {
-  //   const boxes = boxesRef.current;
-  //   const classes = classesRef.current;
+  // Function to calculate Intersection over Union (IoU)
+  const iou = (boxA, boxB) => {
+    const [xA, yA, wA, hA] = boxA;
+    const [xB, yB, wB, hB] = boxB;
 
-  //   ctx.lineWidth = 6;
-  //   ctx.font = '26px Arial';
+    const xA1 = xA - wA / 2, yA1 = yA - hA / 2;
+    const xA2 = xA + wA / 2, yA2 = yA + hA / 2;
+    const xB1 = xB - wB / 2, yB1 = yB - hB / 2;
+    const xB2 = xB + wB / 2, yB2 = yB + hB / 2;
 
-  //   boxes.forEach((box, idx) => {
-  //     const [x_center, y_center, width, height] = box;
-  //     const x = (x_center - width / 2) * ctx.canvas.width;
-  //     const y = (y_center - height / 2) * ctx.canvas.height;
-  //     const w = width * ctx.canvas.width;
-  //     const h = height * ctx.canvas.height;
+    const interX1 = Math.max(xA1, xB1);
+    const interY1 = Math.max(yA1, yB1);
+    const interX2 = Math.min(xA2, xB2);
+    const interY2 = Math.min(yA2, yB2);
 
-  //     ctx.strokeStyle = classes[idx] === 0 ? 'red' : 'green';
-  //     ctx.fillStyle = classes[idx] === 0 ? 'red' : 'green';
+    const interArea = Math.max(0, interX2 - interX1) * Math.max(0, interY2 - interY1);
+    const boxAArea = (xA2 - xA1) * (yA2 - yA1);
+    const boxBArea = (xB2 - xB1) * (yB2 - yB1);
 
-  //     ctx.strokeRect(x, y, w, h);
-  //     ctx.fillText(classes[idx] === 0 ? 'Infested' : 'Healthy', x, y > 20 ? y - 10 : y + 30);
-  //   });
-  // };
-
-  const updateCounts = (result) => {
-    const total = result.infested_count + result.not_infested_count;
-    setTotalCorn(total);
-    setInfestedCorn(result.infested_count);
-    setPercentageInfested(total > 0 ? (result.infested_count / total) * 100 : 0);
+    const unionArea = boxAArea + boxBArea - interArea;
+    return unionArea > 0 ? interArea / unionArea : 0; // Avoid division by zero
   };
 
-  // const saveSummary = async (infestedCount, notInfestedCount) => {
-  //   if (infestedCount + notInfestedCount === 0) return;
+  // Function to update tracked objects
+  const updateTrackedObjects = (newDetections) => {
+    const now = Date.now();
+    const updatedTrackedObjects = [];
+    const matchedIndices = new Set();
 
-  //   try {
-  //     const response = await fetch('http://localhost:5000/save_summary', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         infested_count: infestedCount,
-  //         not_infested_count: notInfestedCount,
-  //       }),
-  //     });
+    // Try to match new detections with existing tracked objects
+    newDetections.forEach((detection) => {
+      let bestMatch = null;
+      let highestIou = 0.4; // IoU threshold (Increased from 0.3)
 
-  //     const data = await response.json();
-  //     console.log('Summary saved:', data.message);
-  //   } catch (err) {
-  //     console.error('Error saving summary:', err);
-  //   }
-  // };
+      trackedObjectsRef.current.forEach((obj, index) => {
+        if (!matchedIndices.has(index)) { // Only consider unmatched tracked objects
+          const iouValue = iou(obj.box, detection.box);
+          if (iouValue > highestIou) {
+            highestIou = iouValue;
+            bestMatch = { ...obj, index }; // Store index to mark as matched
+          }
+        }
+      });
+
+      if (bestMatch) {
+        // Update the matched object
+        bestMatch.box = detection.box;
+        bestMatch.timestamp = now;
+        bestMatch.class = detection.class; // Update class
+        updatedTrackedObjects.push(bestMatch);
+        matchedIndices.add(bestMatch.index); // Mark this tracked object index as matched
+        // Add to cumulative infested set if it's infested
+        if (bestMatch.class === 0) {
+          infestedPlantIdsRef.current.add(bestMatch.id);
+        }
+      } else {
+        // Assign a new ID and add as a new object
+        const newObj = {
+          id: nextObjectId.current++,
+          box: detection.box,
+          timestamp: now,
+          class: detection.class,
+        };
+        updatedTrackedObjects.push(newObj);
+        // Add to cumulative infested set if it's infested
+        if (newObj.class === 0) {
+          infestedPlantIdsRef.current.add(newObj.id);
+        }
+      }
+    });
+
+    // Add back any existing tracked objects that weren't matched but are not stale
+    trackedObjectsRef.current.forEach((obj, index) => {
+      // Keep objects that weren't matched if they are not stale (Increased timeout to 10s)
+      if (!matchedIndices.has(index) && now - obj.timestamp < 1000) {
+        updatedTrackedObjects.push(obj);
+      }
+    });
+
+    // Update the ref with the new list of tracked objects
+    trackedObjectsRef.current = updatedTrackedObjects;
+  };
+
+  // Updated drawBoxes function to use tracked objects and show IDs
+  const drawBoxes = (ctx) => {
+    const trackedObjects = trackedObjectsRef.current;
+
+    // Clear previous drawings
+    // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clearing is handled by drawVideo loop
+
+    ctx.lineWidth = 2;
+    ctx.font = '20px Arial'; // Increased font size
+
+    trackedObjects.forEach((obj) => {
+      const [x_center, y_center, width, height] = obj.box;
+      // Ensure box dimensions are valid numbers
+      if ([x_center, y_center, width, height].some(isNaN)) {
+        console.warn("Skipping drawing invalid box:", obj);
+        return;
+      }
+
+      const x = (x_center - width / 2) * ctx.canvas.width;
+      const y = (y_center - height / 2) * ctx.canvas.height;
+      const w = width * ctx.canvas.width;
+      const h = height * ctx.canvas.height;
+
+      // Ensure calculated coordinates are valid
+       if ([x, y, w, h].some(isNaN)) {
+        console.warn("Skipping drawing invalid calculated box:", {x, y, w, h, obj});
+        return;
+      }
+
+      ctx.strokeStyle = obj.class === 0 ? 'red' : 'green';
+      ctx.strokeRect(x, y, w, h);
+
+      // Display the unique ID and classification text
+      const idText = `ID: ${obj.id}`;
+      const classText = obj.class === 0 ? 'Infested' : 'Healthy';
+      const textYPosition = y > 40 ? y - 5 : y + 25; // Adjust base position if box is near top
+
+      ctx.fillStyle = 'yellow'; // Text color
+      ctx.fillText(idText, x, textYPosition);
+      ctx.fillText(classText, x, textYPosition + 20); // Place classification text below ID
+    });
+  };
+
+  // Updated updateCounts function for cumulative total and cumulative infested
+  const updateCounts = () => {
+    const cumulativeTotalCount = nextObjectId.current - 1; // Total unique plants ever detected
+    const cumulativeInfestedCount = infestedPlantIdsRef.current.size;
+  
+    setTotalCorn(cumulativeTotalCount);
+    setInfestedCorn(cumulativeInfestedCount);
+  
+    if (cumulativeTotalCount > 0) {
+      const percentage = (cumulativeInfestedCount / cumulativeTotalCount) * 100;
+      setPercentageInfested(percentage);
+    } else {
+      setPercentageInfested(0);
+    }
+  };
+  
 
   return (
     <>
       <div className="layout-container">
-        {/* Detection Summary */}
         <div className="detection-section">
           <h3>DETECTION SUMMARY</h3>
-
           <div className="detection-cards">
             <div className="card total">
               <h4>Total Corn Plants Detected</h4>
@@ -198,19 +294,18 @@ function Home() {
             </div>
             <div className="card not-infested">
               <h4>Not Infested Corn Plants</h4>
+              {/* Use state variables which hold the cumulative counts */}
               <p>{totalCorn - infestedCorn}</p>
             </div>
             <div className="card percentage">
               <h4>Percentage Infested</h4>
-              <p>{percentageInfested ? percentageInfested.toFixed(2) : '0.00'}%</p>
+              <p>{percentageInfested.toFixed(2)}%</p>
             </div>
           </div>
         </div>
 
-        {/* Drone Live Feed Section */}
         <div className="drone-feed-section">
           <h3>DRONE LIVE FEED</h3>
-
           <div className="iframe-container" style={{ position: 'relative', width: '1000px', height: '600px' }}>
             <iframe
               ref={iframeRef}
@@ -223,12 +318,7 @@ function Home() {
               allowFullScreen
               style={{ position: 'relative', zIndex: 1 }}
             />
-
-            <video
-              ref={videoCaptureRef}
-              style={{ display: 'none' }}
-            />
-
+            <video ref={videoCaptureRef} style={{ display: 'none' }} />
             <canvas
               ref={canvasRef}
               style={{
@@ -243,7 +333,8 @@ function Home() {
             />
           </div>
         </div>
-        {/* Options */}
+      </div>
+
       <div className="options">
         <button 
           onClick={() => navigate('/summary', {
@@ -258,7 +349,6 @@ function Home() {
         >
           View Summary
         </button>
-      </div>
       </div>
     </>
   );

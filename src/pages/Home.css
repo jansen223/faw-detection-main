@@ -6,7 +6,6 @@
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
-  gap: 80px;
   background-color: rgba(0, 0, 0, 0.226); /* Semi-transparent background */
   backdrop-filter: blur(10px); /* Adds blur effect */
   
@@ -96,7 +95,7 @@
   align-items: center;
   width: 100%;
   margin-bottom: 30px;
-  
+  margin-top: 50px;
 }
 
 .view-summary-button {

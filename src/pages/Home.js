@@ -333,9 +333,7 @@ function Home() {
             />
           </div>
         </div>
-      </div>
-
-      <div className="options">
+        <div className="options">
         <button 
           onClick={() => navigate('/summary', {
             state: {
@@ -349,6 +347,7 @@ function Home() {
         >
           View Summary
         </button>
+      </div>
       </div>
     </>
   );

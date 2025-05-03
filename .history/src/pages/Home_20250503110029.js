@@ -54,20 +54,17 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    const videoElement = videoCaptureRef.current; // Copy ref once
-  
     const captureIframeScreen = async () => {
       try {
         const stream = await navigator.mediaDevices.getDisplayMedia({
           video: { frameRate: 30 },
           audio: false,
         });
-  
-        if (videoElement) {
-          videoElement.srcObject = stream;
-          await videoElement.play();
-        }
-  
+
+        const video = videoCaptureRef.current;
+        video.srcObject = stream;
+        await video.play();
+
         setIsScreenCaptured(true);
         console.log('Screen captured successfully');
       } catch (err) {
@@ -75,19 +72,56 @@ function Home() {
         setIsScreenCaptured(false);
       }
     };
-  
+
     captureIframeScreen();
-  
+
     return () => {
-      if (videoElement) {
-        const stream = videoElement.srcObject;
-        if (stream) {
-          const tracks = stream.getTracks();
-          tracks.forEach((track) => track.stop());
-        }
+      const video = videoCaptureRef.current;
+      const stream = video?.srcObject;
+      if (stream) {
+        const tracks = stream.getTracks();
+        tracks.forEach((track) => track.stop());
       }
     };
-  }, []);  
+  }, []);
+
+  useEffect(() => {
+    let animationFrameId;
+    let isMounted = true;
+  
+    const drawVideo = () => {
+      if (!isMounted) return;
+  
+      const video = videoCaptureRef.current;
+      const canvas = canvasRef.current;
+  
+      if (!video || !canvas) {
+        animationFrameId = requestAnimationFrame(drawVideo);
+        return;
+      }
+  
+      const ctx = canvas.getContext('2d');
+      if (!ctx || video.readyState < 2) {
+        animationFrameId = requestAnimationFrame(drawVideo);
+        return;
+      }
+  
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+  
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      drawBoxes(ctx);
+  
+      animationFrameId = requestAnimationFrame(drawVideo);
+    };
+  
+    animationFrameId = requestAnimationFrame(drawVideo);
+  
+    return () => {
+      isMounted = false;
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
 
   useEffect(() => {
     const captureAndDetect = () => {
@@ -129,27 +163,27 @@ function Home() {
     return () => clearInterval(intervalId);
   }, []);
 
-  // const drawBoxes = (ctx) => {
-  //   const boxes = boxesRef.current;
-  //   const classes = classesRef.current;
+  const drawBoxes = (ctx) => {
+    const boxes = boxesRef.current;
+    const classes = classesRef.current;
 
-  //   ctx.lineWidth = 6;
-  //   ctx.font = '26px Arial';
+    ctx.lineWidth = 6;
+    ctx.font = '26px Arial';
 
-  //   boxes.forEach((box, idx) => {
-  //     const [x_center, y_center, width, height] = box;
-  //     const x = (x_center - width / 2) * ctx.canvas.width;
-  //     const y = (y_center - height / 2) * ctx.canvas.height;
-  //     const w = width * ctx.canvas.width;
-  //     const h = height * ctx.canvas.height;
+    boxes.forEach((box, idx) => {
+      const [x_center, y_center, width, height] = box;
+      const x = (x_center - width / 2) * ctx.canvas.width;
+      const y = (y_center - height / 2) * ctx.canvas.height;
+      const w = width * ctx.canvas.width;
+      const h = height * ctx.canvas.height;
 
-  //     ctx.strokeStyle = classes[idx] === 0 ? 'red' : 'green';
-  //     ctx.fillStyle = classes[idx] === 0 ? 'red' : 'green';
+      ctx.strokeStyle = classes[idx] === 0 ? 'red' : 'green';
+      ctx.fillStyle = classes[idx] === 0 ? 'red' : 'green';
 
-  //     ctx.strokeRect(x, y, w, h);
-  //     ctx.fillText(classes[idx] === 0 ? 'Infested' : 'Healthy', x, y > 20 ? y - 10 : y + 30);
-  //   });
-  // };
+      ctx.strokeRect(x, y, w, h);
+      ctx.fillText(classes[idx] === 0 ? 'Infested' : 'Healthy', x, y > 20 ? y - 10 : y + 30);
+    });
+  };
 
   const updateCounts = (result) => {
     const total = result.infested_count + result.not_infested_count;

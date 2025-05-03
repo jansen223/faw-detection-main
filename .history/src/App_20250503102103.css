@@ -4,7 +4,7 @@ body {
   padding: 0;
   font-family: 'Arial', sans-serif; /* Use a clean, modern font */
   background-color: #f9f9f9; /* Light background for better readability */
-  background-image: url("C:/Users/Jansen Relator/StudioProjects/faw-detection-main/public/images/background.jpg"); /* Path to the image in the public folder */
+  background-image: url('/images/background.jpg'); /* Path to the image in the public folder */
   background-size: cover; /* Ensures the image covers the entire background */
   background-repeat: no-repeat; /* Prevents the image from repeating */
   

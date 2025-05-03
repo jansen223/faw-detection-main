@@ -4,27 +4,27 @@ import './Team.css';
 function Team() {
   const teamMembers = [
     {
-      name: "JANSEN RELATOR",
-      role: "Team Leader",
-      description: "Oversees the overall progress of the study, ensures tasks are completed on time, and coordinates team efforts to achieve project objectives.",
-      image: "images/jansen.png"
+      name: "Jansen Relator",
+      role: "Project Manager",
+      description: "Ensures timely delivery and smooth collaboration across the team.",
+      image: "images/jansen1.png"
     },
     {
-      name: "CLAIRE BELLE CANDIA",
-      role: "Manuscript Writer",
-      description: "Contributes to the research and development process by assisting in various tasks, including data collection, analysis, and documentation.",
+      name: "Claire Belle Candia",
+      role: "Machine Learning Engineer",
+      description: "Specializes in developing and optimizing machine learning models.",
       image: "images/claire.jpg"
     },
     {
-      name: "ANTHONY NEMENZO",
+      name: "Anthony Nemenzo",
       role: "Frontend Developer",
-      description: "Designs and implements the user interface, ensuring a seamless and user-friendly experience for interacting with the system.",
+      description: "Focuses on creating user-friendly interfaces and experiences.",
       image: "images/anthony.jpeg"
     },
     {
-      name: "JOREN VARQUEZ",
+      name: "Joren Varquez",
       role: "Backend Developer",
-      description: "Develops and maintains the server-side logic, database integration, and APIs to ensure efficient and scalable system functionality.",
+      description: "Expert in building scalable and efficient server-side applications.",
       image: "images/joren1.jpg"
     }
   ];

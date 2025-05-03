@@ -129,27 +129,27 @@ function Home() {
     return () => clearInterval(intervalId);
   }, []);
 
-  // const drawBoxes = (ctx) => {
-  //   const boxes = boxesRef.current;
-  //   const classes = classesRef.current;
+  const drawBoxes = (ctx) => {
+    const boxes = boxesRef.current;
+    const classes = classesRef.current;
 
-  //   ctx.lineWidth = 6;
-  //   ctx.font = '26px Arial';
+    ctx.lineWidth = 6;
+    ctx.font = '26px Arial';
 
-  //   boxes.forEach((box, idx) => {
-  //     const [x_center, y_center, width, height] = box;
-  //     const x = (x_center - width / 2) * ctx.canvas.width;
-  //     const y = (y_center - height / 2) * ctx.canvas.height;
-  //     const w = width * ctx.canvas.width;
-  //     const h = height * ctx.canvas.height;
+    boxes.forEach((box, idx) => {
+      const [x_center, y_center, width, height] = box;
+      const x = (x_center - width / 2) * ctx.canvas.width;
+      const y = (y_center - height / 2) * ctx.canvas.height;
+      const w = width * ctx.canvas.width;
+      const h = height * ctx.canvas.height;
 
-  //     ctx.strokeStyle = classes[idx] === 0 ? 'red' : 'green';
-  //     ctx.fillStyle = classes[idx] === 0 ? 'red' : 'green';
+      ctx.strokeStyle = classes[idx] === 0 ? 'red' : 'green';
+      ctx.fillStyle = classes[idx] === 0 ? 'red' : 'green';
 
-  //     ctx.strokeRect(x, y, w, h);
-  //     ctx.fillText(classes[idx] === 0 ? 'Infested' : 'Healthy', x, y > 20 ? y - 10 : y + 30);
-  //   });
-  // };
+      ctx.strokeRect(x, y, w, h);
+      ctx.fillText(classes[idx] === 0 ? 'Infested' : 'Healthy', x, y > 20 ? y - 10 : y + 30);
+    });
+  };
 
   const updateCounts = (result) => {
     const total = result.infested_count + result.not_infested_count;

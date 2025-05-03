@@ -7,6 +7,9 @@
   padding: 20px;
   box-sizing: border-box;
   gap: 80px;
+  background-color: rgba(0, 0, 0, 0.226); /* Semi-transparent background */
+  backdrop-filter: blur(10px); /* Adds blur effect */
+  
 }
 
 .detection-section {
@@ -19,7 +22,7 @@
 .drone-feed-section h3 {
   font-size: 30px;
   font-weight: black;
-  color: #004d40;
+  color: #ffffff;
   margin-bottom: 20px;
 }
 
@@ -59,10 +62,17 @@
   background-color: #c8e6c9;
   color: #1b5e20;
 }
+
 .detection-cards .card.total {
   background-color: #f2ff00;
   color: #808000;
 }
+
+.detection-cards .card.percentage {
+  background-color: white;
+  color: black;
+}
+
 .detection-cards .card h4 {
   font-size: 24px; /* Increased font size for headings */
 }
@@ -85,8 +95,8 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-top: 20px;
   margin-bottom: 30px;
+  
 }
 
 .view-summary-button {

@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { color } from 'chart.js/helpers';
 
 // Register required Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -13,7 +14,6 @@ function Summary() {
 
   const healthyCorn = totalCorn - infestedCorn;
 
-
   const data = {
     labels: ['Infested Corn', 'Healthy Corn'],
     datasets: [
@@ -23,6 +23,20 @@ function Summary() {
         hoverBackgroundColor: ['#ffcccb', '#c8e6c9'],
       },
     ],
+  };
+
+  const options = {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: {
+          font: {
+            size: 20, // Adjust the font size as needed
+          },
+          color: '#ffffff', // Set the font color to white
+        },
+      },
+    },
   };
 
   return (
@@ -69,7 +83,7 @@ function Summary() {
         }}
       >
         <h3>Infestation Breakdown</h3>
-        <Pie data={data} options={{ maintainAspectRatio: false }} />
+        <Pie data={data} options={options} />
       </div>
 
       {/* Back to Home Button */}

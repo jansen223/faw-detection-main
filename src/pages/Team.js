@@ -5,26 +5,26 @@ function Team() {
   const teamMembers = [
     {
       name: "Jansen Relator",
-      role: "Machine Learning Engineer",
-      description: "Specializes in developing and optimizing machine learning models.",
+      role: "Project Manager",
+      description: "Ensures timely delivery and smooth collaboration across the team.",
       image: "images/jansen.png"
     },
     {
       name: "Claire Belle Candia",
-      role: "Frontend Developer",
-      description: "Focuses on creating user-friendly interfaces and experiences.",
-      image: "images/profile.jpg"
+      role: "Machine Learning Engineer",
+      description: "Specializes in developing and optimizing machine learning models.",
+      image: "images/claire.jpg"
     },
     {
       name: "Anthony Nemenzo",
-      role: "Backend Developer",
-      description: "Expert in building scalable and efficient server-side applications.",
-      image: "images/profile.jpg"
+      role: "Frontend Developer",
+      description: "Focuses on creating user-friendly interfaces and experiences.",
+      image: "images/anthony.jpeg"
     },
     {
       name: "Joren Varquez",
-      role: "Project Manager",
-      description: "Ensures timely delivery and smooth collaboration across the team.",
+      role: "Backend Developer",
+      description: "Expert in building scalable and efficient server-side applications.",
       image: "images/joren1.jpg"
     }
   ];

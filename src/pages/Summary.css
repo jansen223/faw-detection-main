@@ -34,7 +34,7 @@
 .summary-container h3, .cart-container h3 {
   font-size: 30px;
   font-weight: black;
-  color: #004d40;
+  color: #ffffff;
   margin-bottom: 20px;
   margin-top: 50px;
 }
@@ -108,23 +108,4 @@
   cursor: pointer;
   font-size: 18px;
   transition: background-color 0.3s ease;
-}
-
-.back-button:hover {
-  background-color: #004d40;
-}
-
-.delete-button {
-  padding: 5px 10px;
-  background-color: #d83939;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
-}
-
-.delete-button:hover {
-  background-color: #b71c1c;
 }

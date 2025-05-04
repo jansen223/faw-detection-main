@@ -130,7 +130,7 @@ function UploadAndDetect() {
 
   return (
     <div className="App">
-      <h3>Upload Images for Mapping</h3>
+      <h3>UPLOAD IMAGES FOR MAPPING</h3>
       <div {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
         <p>Drag and drop images here, or click to select files</p>

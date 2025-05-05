@@ -13,9 +13,6 @@ function Home() {
   const canvasRef = useRef(null);
   const videoCaptureRef = useRef(null);
   const iframeRef = useRef(null);
-  // const boxesRef = useRef([]); // Replaced by trackedObjectsRef
-  // const classesRef = useRef([]); // Replaced by trackedObjectsRef
-  // const previousDetectionsRef = useRef([]); // Replaced by trackedObjectsRef
   const trackedObjectsRef = useRef([]);
   const nextObjectId = useRef(1); // Use useRef to persist the ID counter
   const infestedPlantIdsRef = useRef(new Set()); // Stores IDs of plants ever marked as infested
@@ -124,7 +121,6 @@ function Home() {
             updateCounts(); // Update counts based on tracked objects
             setIsServerReachable(true);
           } catch (err) {
-            // console.error("Detection error:", err); // Optional: log error
             setIsServerReachable(false);
           }
         }
@@ -225,8 +221,8 @@ function Home() {
     // Clear previous drawings
     // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clearing is handled by drawVideo loop
 
-    ctx.lineWidth = 2;
-    ctx.font = '20px Arial'; // Increased font size
+    ctx.lineWidth = 4; // Increased thickness of bounding boxes
+    ctx.font = '24px Arial'; // Increased font size for labels
 
     trackedObjects.forEach((obj) => {
       const [x_center, y_center, width, height] = obj.box;
@@ -242,8 +238,8 @@ function Home() {
       const h = height * ctx.canvas.height;
 
       // Ensure calculated coordinates are valid
-       if ([x, y, w, h].some(isNaN)) {
-        console.warn("Skipping drawing invalid calculated box:", {x, y, w, h, obj});
+      if ([x, y, w, h].some(isNaN)) {
+        console.warn("Skipping drawing invalid calculated box:", { x, y, w, h, obj });
         return;
       }
 
@@ -252,12 +248,12 @@ function Home() {
 
       // Display the unique ID and classification text
       const idText = `ID: ${obj.id}`;
-      const classText = obj.class === 0 ? 'Infested' : 'Healthy';
+      const classText = obj.class === 0 ? 'INFESTED' : 'HEALTHY';
       const textYPosition = y > 40 ? y - 5 : y + 25; // Adjust base position if box is near top
 
       ctx.fillStyle = 'yellow'; // Text color
       ctx.fillText(idText, x, textYPosition);
-      ctx.fillText(classText, x, textYPosition + 20); // Place classification text below ID
+      ctx.fillText(classText, x, textYPosition + 30); // Place classification text below ID
     });
   };
 

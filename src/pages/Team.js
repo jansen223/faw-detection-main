@@ -10,7 +10,7 @@ function Team() {
       image: "images/jansen.png"
     },
     {
-      name: "CLAIRE BELLE CANDIA",
+      name: "CLAIRE CANDIA",
       role: "Manuscript Writer",
       description: "Contributes to the research and development process by assisting in various tasks, including data collection, analysis, and documentation.",
       image: "images/claire.jpg"
